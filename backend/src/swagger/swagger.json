@@ -1,0 +1,96 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PulseSpace Enterprise SaaS API",
+    "version": "1.0.0",
+    "description": "API Documentation for PulseSpace - Unified Knowledge Hub, Workflow Boards & Real-Time Streams SaaS Platform"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5000/api",
+      "description": "Development Server"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "paths": {
+    "/auth/register": {
+      "post": {
+        "summary": "Register a new user account",
+        "tags": ["Auth"],
+        "responses": { "201": { "description": "User created" } }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "summary": "Authenticate user & return JWT tokens",
+        "tags": ["Auth"],
+        "responses": { "200": { "description": "Tokens issued" } }
+      }
+    },
+    "/auth/refresh-token": {
+      "post": {
+        "summary": "Rotate access & refresh tokens",
+        "tags": ["Auth"],
+        "responses": { "200": { "description": "Tokens rotated" } }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "summary": "Logout user and blacklist token in Redis",
+        "tags": ["Auth"],
+        "responses": { "200": { "description": "Logged out" } }
+      }
+    },
+    "/workspaces": {
+      "get": { "summary": "Get user workspaces", "tags": ["Workspaces"] },
+      "post": { "summary": "Create workspace", "tags": ["Workspaces"] }
+    },
+    "/workspaces/{id}/invite": {
+      "post": { "summary": "Invite member to workspace with RBAC role", "tags": ["Workspaces"] }
+    },
+    "/workspaces/{id}/analytics": {
+      "get": { "summary": "Get Workspace Analytics via Mongo Aggregations", "tags": ["Workspaces"] }
+    },
+    "/boards/workspace/{workspaceId}": {
+      "get": { "summary": "Get boards for workspace (Cached in Redis)", "tags": ["Kanban Boards"] }
+    },
+    "/boards": {
+      "post": { "summary": "Create new Kanban board", "tags": ["Kanban Boards"] }
+    },
+    "/boards/{boardId}/lists/{listId}/cards": {
+      "post": { "summary": "Add card to board list", "tags": ["Kanban Cards"] }
+    },
+    "/boards/{boardId}/cards/move": {
+      "put": { "summary": "Atomically move card across lists (MongoDB Transaction)", "tags": ["Kanban Cards"] }
+    },
+    "/documents/workspace/{workspaceId}": {
+      "get": { "summary": "Get knowledge documents for workspace", "tags": ["Knowledge Docs"] }
+    },
+    "/channels/workspace/{workspaceId}": {
+      "get": { "summary": "Get channels for workspace", "tags": ["Chat Streams"] }
+    },
+    "/channels/{channelId}/messages": {
+      "get": { "summary": "Get channel messages", "tags": ["Chat Streams"] },
+      "post": { "summary": "Send channel message & broadcast via Socket.io", "tags": ["Chat Streams"] }
+    },
+    "/audit/workspace/{workspaceId}": {
+      "get": { "summary": "Get workspace audit logs with pagination", "tags": ["Audit Logs"] }
+    },
+    "/search": {
+      "get": { "summary": "Global Multi-Entity Aggregation Search", "tags": ["Search"] }
+    }
+  }
+}
