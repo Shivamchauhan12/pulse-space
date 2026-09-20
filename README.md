@@ -151,3 +151,46 @@ npm run test:coverage
 
 ## 🧪 Testing & Code Quality
 PulseSpace is covered by Jest and Supertest integration tests verifying end-to-end functionality across Auth, Workspaces, RBAC permissions, and Kanban boards with **>60% test coverage**.
+
+---
+
+## ⚙️ Environment Variables Setup
+
+Both backend and frontend contain template environment files (`.env.example`):
+
+### **Backend (`backend/.env.example`):**
+```env
+PORT=5000
+NODE_ENV=development
+MONGO_URI=mongodb://127.0.0.1:27017/pulsespace
+REDIS_URI=redis://127.0.0.1:6379
+JWT_SECRET=pulsespace_jwt_secret_key_2026
+JWT_REFRESH_SECRET=pulsespace_jwt_refresh_secret_2026
+JWT_EXPIRES_IN=15m
+JWT_REFRESH_EXPIRES_IN=7d
+CORS_ORIGIN=http://localhost:5173
+```
+
+### **Frontend (`frontend/.env.example`):**
+```env
+VITE_API_BASE_URL=http://localhost:5000/api
+VITE_SOCKET_URL=http://localhost:5000
+```
+
+---
+
+## 🌐 Production Deployment Configuration
+
+### 1. Docker Compose Container Deployment (AWS EC2 / DigitalOcean / VPS)
+PulseSpace uses **Nginx** as an edge reverse proxy inside the frontend container to route traffic and handle Single-Page Application (SPA) routing:
+
+- **Nginx Config (`frontend/nginx.conf`):** Proxies incoming `/api` & `/socket.io/` requests to the internal Express backend container (`backend:5000`) while serving static React assets with HTML5 fallback (`/index.html`).
+- **Production Command:**
+  ```bash
+  docker-compose up --build -d
+  ```
+
+### 2. Cloud Serverless / PaaS Deployment (Render / Railway / Vercel)
+- **Backend Service (Render / Railway):** Deploy `/backend` with environment variables (`MONGO_URI` pointing to MongoDB Atlas, `REDIS_URI` pointing to Upstash Redis).
+- **Frontend Service (Vercel / Netlify):** Deploy `/frontend` with `VITE_API_BASE_URL` pointing to your deployed backend domain.
+
